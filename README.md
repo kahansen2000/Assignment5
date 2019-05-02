@@ -14,8 +14,12 @@ Assignment 5: Database
 
 References:
 cplusplus.com
+
 stackoverflow.com
+
 http://en.cppreference.com/w/cpp/language/operator_comparison
+
+Data Structures Textbook
 
 
 Known Errors:
