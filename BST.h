@@ -57,7 +57,7 @@ class BST {
   	
     BST();
     //copy constructor
-    BST(BST copied);
+    BST<T>(const BST<T>&);
     virtual ~BST();
 
     bool contains(int k);//done
@@ -83,9 +83,8 @@ template <class T>
   
 //the copy constructor will be used for rollback
 template <class T>
-BST<T>::BST(BST copied){
-	root=copied.getRoot();
-	size=copied.getSize();
+BST<T>::BST(const BST<T> &copied){
+	*this=copied;
 }
 
   template <class T>
