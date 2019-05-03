@@ -16,6 +16,7 @@
 #include "BST.h"
 #include "Student.h"
 #include "Faculty.h"
+#include "GenStack.h"
 
 using namespace std;
 
@@ -24,8 +25,8 @@ class Database {
     	BST<Student> masterStudent;
     	BST<Faculty> masterFaculty;
     	
-    	//GenStack<BST<Student>*> *sRollbackStack;
-    	//GenStack<BST<Faculty>*> *fRollbackStack;
+    	GenStack<BST<Student> > *sRollbackStack;
+    	GenStack<BST<Faculty> > *fRollbackStack;
 
     	Database();
     	~Database();
@@ -36,6 +37,10 @@ class Database {
 		bool again;
 		
     	void printMenu();
+    	void importFiles();
+    	void exportFiles();
+    	void outputStudent(TreeNode<Student> *stu, string fileName);
+    	void outputFaculty(TreeNode<Faculty> *fac, string fileName);
     	
     	//the database options
     	void printAllStudents();
