@@ -23,8 +23,265 @@ TreeNode<Student>* Database::getStudentRoot() {
 TreeNode<Faculty>* Database::getFacultyRoot() {
   return masterFaculty.getRoot();
 }
+void Database::importFiles(){
+	cout <<"Importing files"<<endl;
+	ifstream sFile;
+	ifstream fFile;
+	string input="";
+	int sCount=0;
+	int stepCount=1;
+	
+	//variables of students and faculty
+	int sID = 0;
+ 	string sName = "";
+ 	string sLevel = "";
+	string sMajor = "";
+  	double gpa = 0.0;
+  	int sAdvisorID = 0;
+  	int fID = 0;
+  	string fName = "";
+  	string fLevel = "";
+  	string department = "";
+  	int adviseeID = 0;
+  	
+  	sFile.open("studentTable.txt");
+//opening and importing student file
+  if(sFile.is_open()) {
+    try {
+      getline(sFile, input);
 
+      if(input != "") {
+        sCount = atoi(input.c_str());
+        sCount*=7;
+      }
+    }
+    catch(exception e) {
+      cout << "File is not in correct format, it cannot be read" << endl;
+    }
+
+    for(int i = 0; i < sCount; i++) {
+      getline(sFile, input);
+
+      switch(stepCount) {
+        case 1: {
+          if(input != "~") {//the space saver between elements of the tree
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 2: {
+          try {
+            sID = atoi(input.c_str());
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 3: {
+          sName = input;
+          break;
+        }
+        case 4: {
+          sLevel = input;
+          break;
+        }
+        case 5: {
+          sMajor = input;
+        }
+        case 6: {
+          try {
+            gpa = atof(input.c_str());
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 7: {
+          try {
+            sAdvisorID = atoi(input.c_str());
+
+            Student *stu = new Student(sID, sName, sLevel, sMajor, gpa, sAdvisorID);
+            TreeNode<Student> *sNode = new TreeNode<Student>(stu, sID);
+            masterStudent.insert(sNode);
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        default:
+          break;
+      }
+
+      stepCount++;
+      stepCount%=7; //makes cases repeat after each student
+      
+    }
+    cout <<"Students Filled"<<endl;
+  }
+ 
+  else {
+    cout << "Creating empty student tree" << endl;
+  }
+  sFile.close();
+  
+  //opening and importing faculty file
+  stepCount=1;
+  int fCount=0;
+  fFile.open("facultyTable.txt");
+  if(fFile.is_open()) {
+    try {
+      getline(fFile, input);
+
+      if(input != "") {
+        fCount = atoi(input.c_str());
+        fCount*=7;
+      }
+    }
+    catch(exception e) {
+      cout << "File is not in correct format, it cannot be read" << endl;
+    }
+
+    for(int i = 0; i < fCount; i++) {
+      getline(fFile, input);
+
+      switch(stepCount) {
+        case 1: {
+          if(input != "~") {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 2: {
+          try {
+            fID = atoi(input.c_str());
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 3: {
+          fName = input;
+          break;
+        }
+        case 4: {
+          fLevel = input;
+          break;
+        }
+        case 5: {
+          department = input;
+        }
+        case 6: {
+          try {
+            cout<<"";
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        case 7: {
+          try {
+            adviseeID = atoi(input.c_str());
+
+            Faculty *fac = new Faculty(fID, fLevel, fName, department);
+            TreeNode<Faculty> *fNode = new TreeNode<Faculty>(fac, fID);
+            masterFaculty.insert(fNode);
+          }
+          catch(exception e) {
+            cout << "File is not in correct format, it cannot be read" << endl;
+          }
+          break;
+        }
+        default:
+          break;
+      }
+
+      stepCount++;
+      stepCount%=7; //makes cases repeat after each student
+      
+    }
+    cout <<"Faculty Filled"<<endl;
+  }
+ 
+  else {
+    cout << "Creating empty faculty tree" << endl;
+  }
+	fFile.close();
+
+	
+}
+void Database::exportFiles(){
+	//saving student tree
+	TreeNode<Student> *stu = masterStudent.getRoot();
+	string fileName="studentTable.txt";
+	outputStudent(stu, fileName);
+	
+	
+	//saving faculty tree
+	TreeNode<Faculty> *fac = masterFaculty.getRoot();
+	fileName="facultyTable.txt";
+	outputFaculty(fac, fileName);
+}
+void Database::outputStudent(TreeNode<Student> *stu, string fileName){
+	ofstream out;
+	
+	//for student tree:
+	out.open(fileName.c_str());
+	if(out.is_open()){
+		if(stu != NULL) {
+   			out << "~" << endl;
+    		out << stu->data->getID() << endl;
+    		out << stu->data->getName() << endl;
+    		out << stu->data->getLevel() << endl;
+    		out << stu->data->getMajor() << endl;
+    		out << stu->data->getGPA() << endl;
+    		out << stu->data->getAdvisor() << endl;
+
+    		if(stu->left != NULL) {
+      			outputStudent(stu->left, fileName);
+    		}
+
+    		if(stu->right != NULL) {
+      			outputStudent(stu->right, fileName);
+    		}
+  		}
+	}
+	out.close();
+	cout <<"Students saved"<<endl;
+}
+void Database::outputFaculty(TreeNode<Faculty> *fac, string fileName){
+	ofstream out;
+	
+	//for faculty tree:
+	out.open(fileName.c_str());
+	if(out.is_open()){
+		if(fac != NULL) {
+   			out << "~" << endl;
+    		out << fac->data->getID() << endl;
+    		out << fac->data->getName() << endl;
+    		out << fac->data->getLevel() << endl;
+    		out << fac->data->getDepartment() << endl;
+    		out << " "<< endl;
+    		out << fac->data->getAdviseeID() << endl;
+
+    		if(fac->left != NULL) {
+      			outputFaculty(fac->left, fileName);
+    		}
+
+    		if(fac->right != NULL) {
+      			outputFaculty(fac->right, fileName);
+    		}
+  		}
+	}
+	out.close();
+	cout <<"Faculty saved"<<endl;
+}
 void Database::printMenu(){
+	importFiles();
 	int choice;
 	while(again){
 		cout <<"Here are your options:"<<endl;
@@ -111,16 +368,26 @@ void Database::printAllFaculty(){
 		printMasterFaculty(masterFaculty.getRoot());
 }
 void Database::printStudent(){
-	int id;
-	cout <<"What is the id of the student you'd like to print?"<<endl;
-	cin >>id;
-	masterStudent.find(id)->printStudent();
+	if(masterStudent.isEmpty()){
+		cout<<"There are no students"<<endl;
+	}
+	else{
+		int id;
+		cout <<"What is the id of the student you'd like to print?"<<endl;
+		cin >>id;
+		masterStudent.find(id)->printStudent();
+	}
 }
 void Database::printFaculty(){
-	int id;
-	cout <<"What is the id of the faculty member you'd like to print?"<<endl;
-	cin >>id;
-	masterFaculty.find(id)->printFaculty();
+	if(masterStudent.isEmpty()){
+		cout<<"There are no faculty members"<<endl;
+	}
+	else{
+		int id;
+		cout <<"What is the id of the faculty member you'd like to print?"<<endl;
+		cin >>id;
+		masterFaculty.find(id)->printFaculty();
+	}
 }
 void Database::printAdvisor(){
 	int stuID;
@@ -133,7 +400,9 @@ void Database::printAdvisor(){
 			cin>>stuID;
 			if(masterStudent.contains(stuID)){
 				Student *stu =masterStudent.find(stuID);
-				masterFaculty.find(stu->getAdvisor())->printFaculty();
+				cout << "Advisor: ";
+				cout << stu->getAdvisor();
+				cout << endl;
 				break;
 			}
 			else{
@@ -151,17 +420,22 @@ void Database::printAdvisee(){
 		while(true){
 			cout<<"What is the faculty's ID?"<<endl;
 			cin >>facID;
+			int count=0;
 			if(masterFaculty.contains(facID)){
 				Faculty *fac = masterFaculty.find(facID);
 				for(int i = 0; i < fac->getSize(); ++i) {
             		if(fac->advisees[i] != -1) {
-              			masterStudent.find(fac->advisees[i])->printStudent();
-              			break;
-            		}
-            		else {
-              			cout << "Faculty has no advisees" << endl;
+              			Student *stu=masterStudent.find(fac->advisees[i]);
+              			int sID=stu->getID();
+              			cout <<"ID: ";
+              			cout <<sID;
+              			cout <<", "<<endl;
+              			count++;
             		}
           		}
+          		if(count==0){
+          			cout<< "Faculty has no advisees"<<endl;
+				}
          		break;
 			}
 			else{
@@ -172,9 +446,9 @@ void Database::printAdvisee(){
 	
 }
 void Database::addStudent(){
-	
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	/*BST<Student> studentCopy=masterStudent;
+	sRollbackStack->push(masterStudent);
+	//fRollbackStack->push(new BST<Faculty>(masterFaculty));*/
 	
 	
 	
@@ -225,8 +499,8 @@ void Database::addStudent(){
 void Database::deleteStudent(){
 	
 	
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	//sRollbackStack->push(new BST(masterStudent));
+	//fRollbackStack->push(new BST(masterFaculty);
 	
 	
 	int stuID;
@@ -246,8 +520,8 @@ void Database::deleteStudent(){
 }
 void Database::addFaculty(){
 	
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	//sRollbackStack->push(new BST(masterStudent));
+	//fRollbackStack->push(new BST(masterFaculty);
 	
 	
 	int facID;
@@ -273,8 +547,8 @@ void Database::addFaculty(){
 }
 void Database::deleteFaculty(){
 
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	//sRollbackStack->push(new BST(masterStudent));
+	//fRollbackStack->push(new BST(masterFaculty);
 
 
 	int facID;
@@ -297,8 +571,8 @@ void Database::deleteFaculty(){
 void Database::changeAdvisor(){
 	
 	
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	//sRollbackStack->push(new BST(masterStudent));
+	//fRollbackStack->push(new BST(masterFaculty);
 	
 	
 	int stuID;
@@ -315,15 +589,15 @@ void Database::changeAdvisor(){
 			cout <<"Invalid ID"<<endl;
 		}
 		else{
-			masterStudent.find(stuID)->setAdvisor(facID);
-    		masterFaculty.find(stuID)->addAdvisee(facID);
+			masterStudent.find(stuID)->setAdvisor(facID);//seg fault
+    		masterFaculty.find(stuID)->addAdvisee(facID);//seg fault
 		}
 	}
 }
 void Database::removeAdvisee(){
 	
-	//sRollbackStack->push(masterStudent);
-	//fRollbackStack->push(masterFaculty);
+	//sRollbackStack->push(new BST(masterStudent));
+	//fRollbackStack->push(new BST(masterFaculty);
 	
 	int stuID;
 	int facID;
@@ -347,6 +621,7 @@ void Database::removeAdvisee(){
 	}
 }
 void Database::rollback(){
+	cout <<"Rollback unavailable at this time"<<endl;
 	//I couldn't get rollback to work
 	
 	/*if(!sRollbackStack->isEmpty()) {
@@ -355,6 +630,7 @@ void Database::rollback(){
 	}*/
 }
 void Database::exit(){
+	exportFiles();
 	again=false;
 	cout <<"Thank you for using this database"<<endl;
 }
