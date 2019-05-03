@@ -10,7 +10,7 @@
 using namespace std;
 
 Faculty::Faculty() {
-
+	name="";
 }
 
 Faculty::~Faculty() {
@@ -100,12 +100,13 @@ bool Faculty::removeAdvisee(int adviseeID) {
 }
 
 void Faculty::printFaculty() {
-  cout << "Name:  " << name << ", ";
-  cout << "ID: " << id << ", ";
+  cout << "Name:  ";
+  cout << "";
+ /* cout << "ID: " << id << ", ";
   cout << "Level: " << level << ", ";
   cout << "Department: " << department << ", ";
-  cout << "Advisees: ";
-  printAllAdvisees();
+  cout << "Advisees: ";*/
+  //printAllAdvisees();
 }
 //prints out the students of the faculty member
 void Faculty::printAllAdvisees() {
@@ -115,7 +116,7 @@ void Faculty::printAllAdvisees() {
   else {
     for(int i = 0; i < maxSize; ++i) {
       if(advisees[i] != -1) {
-        cout << advisees[i];//prints out the advisee id
+        //cout << advisees[i];//prints out the advisee id
         if(i < adviseeCount - 1) {
           cout  << ", ";
         }
